@@ -1,0 +1,29 @@
+{
+  "name": "SpreadSheetToNestedJson",
+  "version": "1.0.0",
+  "description": "make nested json data from google spreadsheed data with specific format",
+  "main": "build/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "prepare": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toshick/spreadSheetToNestedJson.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/toshick/spreadSheetToNestedJson/issues"
+  },
+  "homepage": "https://github.com/toshick/spreadSheetToNestedJson#readme",
+  "devDependencies": {
+    "prettier": "2.2.0",
+    "typescript": "^4.1.2"
+  },
+  "files": [
+    "build"
+  ]
+}
