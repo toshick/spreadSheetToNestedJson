@@ -5,7 +5,10 @@
   "main": "build/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "lint:js": "eslint --ext .js --ignore-path .gitignore .",
+    "lint": "npm run lint:js",
     "build": "tsc",
+    "dev": "tsc -w",
     "prepare": "npm run build"
   },
   "repository": {
@@ -20,6 +23,15 @@
   },
   "homepage": "https://github.com/toshick/spreadSheetToNestedJson#readme",
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.8.1",
+    "@typescript-eslint/parser": "^4.8.1",
+    "eslint": "^7.14.0",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-config-standard": "^16.0.2",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-promise": "^4.2.1",
     "prettier": "2.2.0",
     "typescript": "^4.1.2"
   },

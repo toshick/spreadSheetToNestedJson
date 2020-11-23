@@ -4,6 +4,7 @@
     "target": "es5",
     "module": "commonjs",
     // "lib": ["ESNext", "ESNext.AsyncIterable", "DOM"],
+    "lib": ["es2015", "dom"],
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowJs": true,
