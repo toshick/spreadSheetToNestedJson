@@ -1,142 +1,48 @@
-import { SpreadSheetSource, SpreadSheetDirLang, SpreadSheetDir } from './types/type';
+/**
+ * json keyにこのキーが含まれている場合、
+ * 入れ子のディレクトリとして処理する
+ */
+const blockRowKey = 'block';
 
-const pagedata: SpreadSheetSource[] = [
-  {
-    pageTitle: 'ページタイトル（タイトル）',
-    sectionTitle: '会議（かいぎ）をはじめる',
-    ja: 'チーム内(ない)のコミュニケーション不足(ぶそく)が、問題(もんだい)になっています。',
-    en: 'The lack of communication among team members is becoming a problem.',
-    who: 'タコのすけ',
-  },
-  {
-    pageTitle: '',
-    sectionTitle: '',
-    ja: 'ちょっと不具合(ふぐあい)があるので、今日中(きょうじゅう)に直(なお)します。',
-    en: "There are some defects, so I'll fix it by the end of the day.",
-    who: '',
-  },
-  {
-    pageTitle: '',
-    sectionTitle: '',
-    ja: '週末（しゅうまつ）はどうでしたか？2',
-    en: 'How was your weekend?',
-    who: 'タコのすけ',
-  },
-  {
-    pageTitle: '',
-    sectionTitle: 'セクションタイトル',
-    ja: '今日（きょう）は寒（さむ）いよね',
-    en: 'It’s cold today, isn’t it?',
-    who: 'イカ二郎',
-  },
-  {
-    pageTitle: '',
-    sectionTitle: '',
-    ja: 'それでははじめよう',
-    en: 'Shall we get started?',
-    who: 'タコのすけ',
-  },
-  {
-    pageTitle: '',
-    sectionTitle: 'セクションタイトル2',
-    ja: '***さんからはじめよう',
-    en: 'Let’s start with Mr.***.',
-    who: 'イカ二郎',
-  },
-  {
-    pageTitle: '',
-    sectionTitle: '',
-    ja: '時間（じかん）がなくなってきました',
-    en: 'We’re running out of time.',
-    who: 'タコのすけ',
-  },
-  {
-    pageTitle: 'ページタイトル2',
-    sectionTitle: '会議（かいぎ）をはじめる',
-    ja: 'ごきげんいかが？',
-    en: 'Hi everyone. How’s it going?',
-    who: 'イカ二郎',
-  },
-  {
-    pageTitle: '',
-    sectionTitle: 'ページタイトル2のセクション',
-    ja: '週末（しゅうまつ）はどうでしたか？',
-    en: 'How was your weekend?',
-    who: 'タコのすけ',
-  },
-  {
-    pageTitle: 'ページタイトル3',
-    sectionTitle: '会議（かいぎ）をはじめる',
-    ja: 'ごきげんいかが？',
-    en: 'Hi everyone. How’s it going?',
-    who: 'イカ二郎',
-  },
-  {
-    pageTitle: '',
-    sectionTitle: 'ページタイトル2のセクション',
-    ja: '週末（しゅうまつ）はどうでしたか？',
-    en: 'How was your weekend?',
-    who: 'タコのすけ',
-  },
-  {
-    pageTitle: 'ページタイトル4',
-    sectionTitle: '会議（かいぎ）をはじめる',
-    ja: 'ごきげんいかが？',
-    en: 'Hi everyone. How’s it going?',
-    who: 'イカ二郎',
-  },
-  {
-    pageTitle: '',
-    sectionTitle: 'ページタイトル2のセクション',
-    ja: '週末（しゅうまつ）はどうでしたか？',
-    en: 'How was your weekend?',
-    who: 'タコのすけ',
-  },
-  {
-    pageTitle: 'ページタイトル5',
-    sectionTitle: '会議（かいぎ）をはじめる',
-    ja: 'ごきげんいかが？',
-    en: 'Hi everyone. How’s it going?',
-    who: 'イカ二郎',
-  },
-  {
-    pageTitle: '',
-    sectionTitle: 'ページタイトル2のセクション',
-    ja: '週末（しゅうまつ）はどうでしたか？',
-    en: 'How was your weekend?',
-    who: 'タコのすけ',
-  },
-];
+// テキストを格納する時のコールバック
+export type StoreCallback = (key: string, str: string) => void;
+// GASから出力されるソースデータjson（key: スプレッドシートの1列目のキー）
+export type SpreadSheetSource = { [key: string]: string };
+// dataセルのデータ
+export type SpreadSheetCellData = { [key: string]: string };
 
-const sheetJson = getSheetJson(pagedata, (str: string) => {
-  return str.trim().replace(/\(/g, '（').replace(/\)/g, '）');
-});
+export type SpreadSheetDir = {
+  title: string;
+  children: SpreadSheetDir[];
+  celldata: SpreadSheetCellData[];
+};
 
-console.log('sheetJson', sheetJson);
-// type Key = 'pageTitle' | 'sectionTitle' | 'ja' | 'en' | 'who';
-// const keys: string[] = ['pageTitle', 'sectionTitle', 'ja', 'en', 'who'];
-
-function getSheetJson(rows: SpreadSheetSource[], storeCallback?: (str: string) => void) {
-  const pages = splitPageData(rows, storeCallback);
-
-  // console.log('pages', JSON.stringify(pages));
-
+/**
+ * SpreadSheetSourceデータをnestした状態で返却
+ */
+export const getNestedJson = (
+  rows: SpreadSheetSource[],
+  onStore?: StoreCallback,
+) => {
+  const pages = splitPageData(rows, onStore);
   const d = pages.map((ary) => {
-    return mergeChildren(ary);
+    return mergeChildren(ary).children;
   });
-
-  // console.log('ori after', JSON.stringify(d));
-
   return d;
-}
+};
 
-// タイトルブロックを区別する
-// タイトルが存在する場合配列を別にする
-function splitPageData(rows: SpreadSheetSource[], storeCallback?: (str: string) => void): SpreadSheetDir[][] {
+/**
+ * タイトルブロックを区別する
+ * タイトルが存在する場合配列を別にする
+ */
+function splitPageData(
+  rows: SpreadSheetSource[],
+  onStore?: StoreCallback,
+): SpreadSheetDir[][] {
   const ret: SpreadSheetDir[][] = [];
   let tmp: SpreadSheetDir[] = [];
   rows.forEach(function (row) {
-    const obj = makeDirObj(row, storeCallback);
+    const obj = makeDirObj(row, onStore);
     if (!obj) return;
     if (obj.title) {
       if (tmp.length > 0) ret.push(tmp);
@@ -148,19 +54,21 @@ function splitPageData(rows: SpreadSheetSource[], storeCallback?: (str: string) 
   return ret;
 }
 
-// childrenをマージする
+/**
+ * childrenをマージする
+ */
 function mergeChildren(items: SpreadSheetDir[]) {
   const ret: SpreadSheetDir = {
     title: '',
     children: [],
-    sentences: [],
+    celldata: [],
   };
   const children: any[] = [];
-  const sentences: any[] = [];
+  const celldata: any[] = [];
   let tmpChildren: any[] = [];
   let tmpSentences: any[] = [];
   let currentTitle = '';
-  items.forEach(function (item: SpreadSheetDir | SpreadSheetDirLang) {
+  items.forEach(function (item: SpreadSheetDir | SpreadSheetCellData) {
     const isDir = item as SpreadSheetDir;
     const mytitle = isDir?.title;
     if (mytitle) {
@@ -170,10 +78,10 @@ function mergeChildren(items: SpreadSheetDir[]) {
         children.push(merged);
       }
       if (tmpSentences && tmpSentences.length > 0) {
-        sentences.push({
+        celldata.push({
           title: currentTitle,
           children: [],
-          sentences: tmpSentences,
+          celldata: tmpSentences,
         });
       }
 
@@ -182,9 +90,9 @@ function mergeChildren(items: SpreadSheetDir[]) {
       currentTitle = mytitle;
     }
 
-    const mysentences = isDir?.sentences as SpreadSheetDirLang[];
-    if (mysentences && mysentences.length > 0) {
-      tmpSentences = tmpSentences.concat(mysentences);
+    const mycelldata = isDir?.celldata as SpreadSheetCellData[];
+    if (mycelldata && mycelldata.length > 0) {
+      tmpSentences = tmpSentences.concat(mycelldata);
     }
 
     const mychildren = isDir?.children as SpreadSheetDir[];
@@ -193,19 +101,15 @@ function mergeChildren(items: SpreadSheetDir[]) {
     }
   });
 
-  if (currentTitle) {
-    ret.title = currentTitle;
-  }
-
   if (tmpSentences && tmpSentences.length > 0) {
-    sentences.push({
+    celldata.push({
       title: currentTitle,
       children: [],
-      sentences: tmpSentences,
+      celldata: tmpSentences,
     });
   }
-  if (sentences.length > 0) {
-    ret.children = sentences;
+  if (celldata.length > 0) {
+    ret.children = celldata;
     return ret;
   }
 
@@ -219,8 +123,13 @@ function mergeChildren(items: SpreadSheetDir[]) {
   return ret;
 }
 
-// ディレクトリにchildrenとtitleを配置したオブジェクトを生成
-function makeDirObj(data: SpreadSheetSource, storeCallback?: (str: string) => void): SpreadSheetDir | null {
+/**
+ * ディレクトリにchildrenとtitleを配置したオブジェクトを生成
+ */
+function makeDirObj(
+  data: SpreadSheetSource,
+  onStore?: StoreCallback,
+): SpreadSheetDir | null {
   let ret: SpreadSheetDir | null = null;
   let tmp: SpreadSheetDir | null = null;
   type Key = keyof SpreadSheetSource;
@@ -228,22 +137,22 @@ function makeDirObj(data: SpreadSheetSource, storeCallback?: (str: string) => vo
   // for (let index = 0; index < keys.length; index++) {
   for (const key of Object.keys(data)) {
     const str = data[key as Key];
-    const isTitle = key.includes('Title');
+    const isBlock = key.includes(blockRowKey);
 
-    if (tmp && str && !isTitle) {
+    if (tmp && str && !isBlock) {
       const rest: any = {};
       for (const k of Object.keys(data)) {
-        if (k.includes('Title')) continue;
+        if (k.includes(blockRowKey)) continue;
         const val = data[k as Key] || '';
-        rest[k] = storeCallback ? storeCallback(val) : val;
+        rest[k] = onStore ? onStore(k, val) : val;
       }
-      tmp.sentences.push(rest);
+      tmp.celldata.push(rest);
       break;
     }
     const item: SpreadSheetDir = {
       title: str || '',
       children: [],
-      sentences: [],
+      celldata: [],
     };
     if (tmp && tmp.children) {
       const ary = tmp.children as SpreadSheetDir[];
