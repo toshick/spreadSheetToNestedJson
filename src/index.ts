@@ -24,6 +24,10 @@ export const getNestedJson = (
   rows: SpreadSheetSource[],
   onStore?: StoreCallback,
 ) => {
+  if (!rows || !Array.isArray(rows)) {
+    throw new Error('not array data provided');
+  }
+
   const pages = splitPageData(rows, onStore);
   const d = pages.map((ary) => {
     return mergeChildren(ary).children;
