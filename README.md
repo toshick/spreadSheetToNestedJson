@@ -5,6 +5,13 @@
 - if key includes "block", that row will be directory (title and children)
 - the other will be stored at "celldata" key data.
 
+### How to use
+
+```js
+const { getNestedJson } = require('spread-sheet-to-nested-json');
+const nested = getNestedJson(mockdata);
+```
+
 ### Spreadsheet Sample
 
 <img src="img/img01.png">
