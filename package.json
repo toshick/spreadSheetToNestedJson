@@ -1,6 +1,6 @@
 {
   "name": "spread-sheet-to-nested-json",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "make nested json data from google spreadsheed data with specific format",
   "main": "build/src/index.js",
   "scripts": {
