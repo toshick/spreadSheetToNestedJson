@@ -8,15 +8,13 @@
 ### How to use
 
 ```js
-const { getNestedJson } = require('spread-sheet-to-nested-json');
-const nested = getNestedJson(mockdata);
+import { getNestedJson } from 'spread-sheet-to-nested-json';
+const nested = getNestedJson({ rows: mockdata });
 ```
 
 ### Spreadsheet Sample
 
 <img src="img/img01.png">
-
-
 
 ### is going to be this from GAS
 
@@ -83,64 +81,61 @@ const nested = getNestedJson(mockdata);
 
 ```
 [
-  [
-    {
-      "title": "title",
-      "children": [
-        {
-          "title": "section1",
-          "children": [
-            {
-              "title": "item1",
-              "children": [],
-              "celldata": [
-                { "dataA": "A-1", "dataB": "B-1", "dataC": "C-1" },
-                { "dataA": "A-2", "dataB": "B-2", "dataC": "C-2" }
-              ]
-            },
-            {
-              "title": "item2",
-              "children": [],
-              "celldata": [
-                { "dataA": "A-3", "dataB": "B-3", "dataC": "C-3" },
-                { "dataA": "A-4", "dataB": "B-4", "dataC": "C-4" }
-              ]
-            }
-          ],
-          "celldata": []
-        },
-        {
-          "title": "section2",
-          "children": [
-            {
-              "title": "item1",
-              "children": [],
-              "celldata": [
-                {
-                  "dataA": "sec2-A-1",
-                  "dataB": "sec2-B-1",
-                  "dataC": "sec2-C-1"
-                },
-                {
-                  "dataA": "sec2-A-2",
-                  "dataB": "sec2-B-2",
-                  "dataC": "sec2-C-2"
-                },
-                {
-                  "dataA": "sec2-A-3",
-                  "dataB": "sec2-B-3",
-                  "dataC": "sec2-C-3"
-                }
-              ]
-            }
-          ],
-          "celldata": []
-        }
-      ],
-      "celldata": []
-    }
-  ]
+  {
+    "title": "title",
+    "children": [
+      {
+        "title": "section1",
+        "children": [
+          {
+            "title": "item1",
+            "children": [],
+            "celldata": [
+              { "dataA": "A-1", "dataB": "B-1", "dataC": "C-1" },
+              { "dataA": "A-2", "dataB": "B-2", "dataC": "C-2" }
+            ]
+          },
+          {
+            "title": "item2",
+            "children": [],
+            "celldata": [
+              { "dataA": "A-3", "dataB": "B-3", "dataC": "C-3" },
+              { "dataA": "A-4", "dataB": "B-4", "dataC": "C-4" }
+            ]
+          }
+        ],
+        "celldata": []
+      },
+      {
+        "title": "section2",
+        "children": [
+          {
+            "title": "item1",
+            "children": [],
+            "celldata": [
+              {
+                "dataA": "sec2-A-1",
+                "dataB": "sec2-B-1",
+                "dataC": "sec2-C-1"
+              },
+              {
+                "dataA": "sec2-A-2",
+                "dataB": "sec2-B-2",
+                "dataC": "sec2-C-2"
+              },
+              {
+                "dataA": "sec2-A-3",
+                "dataB": "sec2-B-3",
+                "dataC": "sec2-C-3"
+              }
+            ]
+          }
+        ],
+        "celldata": []
+      }
+    ],
+    "celldata": []
+  }
 ]
 
 ```
-
