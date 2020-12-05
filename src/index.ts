@@ -2,7 +2,7 @@
  * json keyにこのキーが含まれている場合、
  * 入れ子のディレクトリとして処理する
  */
-const blockRowKey = 'block';
+let blockRowKey = 'block';
 
 // テキストを格納する時のコールバック
 export type StoreCallback = (key: string, str: string) => void;
@@ -20,18 +20,25 @@ export type SpreadSheetDir = {
 /**
  * SpreadSheetSourceデータをnestした状態で返却
  */
-export const getNestedJson = (
-  rows: SpreadSheetSource[],
-  onStore?: StoreCallback,
-) => {
+export const getNestedJson = (p: {
+  rows: SpreadSheetSource[];
+  onStore?: StoreCallback;
+  rowKey?: string;
+}) => {
+  const { rows, onStore, rowKey } = p;
   if (!rows || !Array.isArray(rows)) {
     throw new Error('not array data provided');
   }
+  if (rowKey) {
+    blockRowKey = rowKey;
+  }
 
   const pages = splitPageData(rows, onStore);
+
   const d = pages.map((ary) => {
-    return mergeChildren(ary).children;
+    return mergeChildren(ary).children[0];
   });
+
   return d;
 };
 
